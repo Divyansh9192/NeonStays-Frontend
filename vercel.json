@@ -1,3 +1,8 @@
 {
-  "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://neonstays-backend.onrender.com/:path*"
+    }
+  ]
 }
