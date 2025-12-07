@@ -4,10 +4,12 @@ import { setAccessToken } from "../auth/TokenStorage";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/authSlice";
 import api from "../api/axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const useAutoLogin = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     async function autoLogin() {
@@ -35,6 +37,7 @@ const useAutoLogin = () => {
         }
       } catch (error) {
         console.log("Auto-login failed:", error);
+        console.log("Refresh BASE_URL =", BASE_URL);
       } finally {
         setLoading(false); // IMPORTANT
       }

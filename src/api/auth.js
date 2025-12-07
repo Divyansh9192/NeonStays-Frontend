@@ -1,6 +1,6 @@
 import api from "./axios";
 import refreshClient from "./refreshClient";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const loginUser = async (email, password) => {
   const response = await api.post("/auth/login", {
     email,
