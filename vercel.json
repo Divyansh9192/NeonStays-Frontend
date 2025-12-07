@@ -1,20 +1,5 @@
 {
-  "routes": [
-    {
-      "src": "/auth/(.*)",
-      "dest": "https://neonstays-backend.onrender.com/auth/$1"
-    },
-    {
-      "src": "/assets/(.*)",       
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/favicon.(.*)",      
-      "dest": "/favicon.$1"
-    },
-    {
-      "src": "/(.*)",               
-      "dest": "/index.html"
-    }
+  "rewrites":  [
+    {"source": "/(.*)", "destination": "/"}
   ]
 }
