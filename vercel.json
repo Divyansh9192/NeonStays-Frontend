@@ -1,12 +1,12 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/auth/(.*)",
-      "destination": "https://neonstays-backend.onrender.com/auth/$1"
+      "src": "/auth/(.*)",
+      "dest": "https://neonstays-backend.onrender.com/auth/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
