@@ -40,6 +40,7 @@ export default function Navbar() {
   const startTime = useSelector((state) => state.booking.bookingInitiatedTime);
   const user = useSelector((state) => state?.auth?.user?.data);
   const roles = useSelector((state) => state?.auth?.user?.data?.roles);
+  const  isAuthenticated  = useSelector((state) => state?.auth?.isAuthenticated || false);
 
   function getInitials(name = "") {
     const parts = name.trim().split(" ");
@@ -47,7 +48,7 @@ export default function Navbar() {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  const { isAuthenticated } = useSelector((state) => state.auth || {});
+  ;
   async function handleLogout() {
     try {
       await logout();
@@ -160,7 +161,7 @@ overflow-hidden border-2 rounded-full group
               height: 40,
               bgcolor: isScrolled ? "#1e293b" : "white", // Dark on scroll, white otherwise
               color: isScrolled ? "white" : "#1e293b", // Contrast text
-              border:isScrolled? "2px solid white": "2px solid black",
+              border: isScrolled ? "2px solid white" : "2px solid black",
               fontSize: "1rem",
               fontWeight: "bold",
               cursor: "pointer",
@@ -222,12 +223,25 @@ overflow-hidden border-2 rounded-full group
         <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
           Dashboard
         </button>
-        <Link
-          to="/login"
-          className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 inline-block cursor-pointer"
-        >
-          Login
-        </Link>
+        {isAuthenticated ? (
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsMenuOpen(false);
+            }}
+            className="px-8 py-2.5 bg-black rounded-full text-white cursor-pointer active:scale-95 transition duration-300"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+            className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 inline-block"
+          >
+            Login
+          </Link>
+        )}
       </div>
       <ProfilePopup
         open={isProfileOpen}
