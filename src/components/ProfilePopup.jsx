@@ -4,7 +4,6 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
   TextField,
   Select,
   MenuItem,
@@ -16,32 +15,69 @@ import {
   Tab,
   IconButton,
   Chip,
-  Paper,
+  useMediaQuery,
+  useTheme,
+  Box,
   CircularProgress,
+  Badge,
 } from "@mui/material";
-import { Camera, X, Calendar, MapPin, Users } from "lucide-react";
+import {
+  Camera,
+  X,
+  Calendar,
+  MapPin,
+  Users,
+  User,
+  CreditCard,
+  Briefcase,
+  ChevronRight,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../store/authSlice";
 import { getCurrentUser, updateProfile } from "../api/auth";
-import api from "../api/axios"; // Ensure you have your axios instance imported
+import api from "../api/axios";
+
+// --- Custom Styles & Animation Constants ---
+const GLASS_STYLE = {
+  background: "rgba(17, 25, 40, 0.75)",
+  backdropFilter: "blur(16px) saturate(180%)",
+  border: "1px solid rgba(255, 255, 255, 0.125)",
+  boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+};
+
+const INPUT_STYLES = {
+  "& .MuiOutlinedInput-root": {
+    color: "#e2e8f0",
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    borderRadius: "12px",
+    transition: "all 0.3s ease",
+    "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+    "&.Mui-focused fieldset": {
+      borderColor: "#818cf8", // Indigo-400
+      boxShadow: "0 0 0 4px rgba(129, 140, 248, 0.1)",
+    },
+  },
+  "& .MuiInputLabel-root": { color: "#94a3b8" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "#818cf8" },
+  "& .MuiSvgIcon-root": { color: "#94a3b8" },
+};
 
 export default function ProfilePopup({ open, onClose }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.auth.user);
 
   const [activeTab, setActiveTab] = useState(0);
   const [userData, setUserData] = useState(null);
   const [editForm, setEditForm] = useState(null);
-
-  // Booking States
   const [bookings, setBookings] = useState([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
-
   const [errors, setErrors] = useState({});
   const [toastOpen, setToastOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Load User Profile
   useEffect(() => {
     if (profile?.data) {
       setUserData(profile.data);
@@ -49,45 +85,29 @@ export default function ProfilePopup({ open, onClose }) {
     }
   }, [open, profile]);
 
-  // ✅ FETCH BOOKINGS API INTEGRATION
   useEffect(() => {
-    if (activeTab === 1 && open) {
-      fetchBookings();
-    }
+    if (activeTab === 1 && open) fetchBookings();
   }, [activeTab, open]);
 
   const fetchBookings = async () => {
     try {
       setBookingsLoading(true);
-      // Replace with your actual endpoint
       const response = await api.get("/users/bookings");
-      console.log(response.data.data);
-
-      // ✅ Map Java DTO to UI Format, accessing nested properties
       const mappedBookings = response?.data?.data.map((b) => ({
         id: b.id,
-        // Accessing nested DTO properties:
         hotelName: b.hotel?.name || "Hotel Booking",
         location:
-          b.hotel?.hotelContactInfo?.location ||
-          b.hotel?.city ||
-          "Unknown Location",
-
-        // Use the first photo as the image, or a fallback placeholder
+          b.hotel?.hotelContactInfo?.location || b.hotel?.city || "Unknown",
         image:
           b.hotel?.photos?.[0] ||
-          "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=200",
-
-        // Formatting Dates
+          "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=300",
         dates: `${formatDateShort(b.checkInDate)} - ${formatDateShort(
           b.checkOutDate
         )}`,
-
-        status: b.bookingStatus, // e.g., "CONFIRMED", "PENDING"
+        status: b.bookingStatus,
         price: b.amount,
-        guests: b.guests?.length || b.roomsCount, // Assuming guests count or room count if guests is null
+        guests: b.guests?.length || b.roomsCount,
       }));
-
       setBookings(mappedBookings);
     } catch (error) {
       console.error("Failed to fetch bookings:", error);
@@ -96,13 +116,10 @@ export default function ProfilePopup({ open, onClose }) {
     }
   };
 
-  // Helper: Format "2024-03-08" to "Mar 8"
   const formatDateShort = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    // Ensure date is valid; sometimes backend LocalDate needs time zone treatment
     if (isNaN(date)) {
-      // Fallback for cases where direct parsing fails, often needs Z suffix
       const fallbackDate = new Date(dateString + "T00:00:00Z");
       return fallbackDate.toLocaleDateString("en-US", {
         month: "short",
@@ -112,18 +129,32 @@ export default function ProfilePopup({ open, onClose }) {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
-  // Helper: Get Color based on BookingStatus Enum
   const getStatusColor = (status) => {
-    // Note: The status from the backend will be uppercase string (e.g., "CONFIRMED")
     switch (status) {
       case "CONFIRMED":
-        return { bg: "rgba(34, 197, 94, 0.1)", text: "#4ade80" };
+        return {
+          bg: "rgba(16, 185, 129, 0.15)",
+          text: "#34d399",
+          border: "rgba(16, 185, 129, 0.2)",
+        };
       case "PENDING":
-        return { bg: "rgba(234, 179, 8, 0.1)", text: "#facc15" };
+        return {
+          bg: "rgba(245, 158, 11, 0.15)",
+          text: "#fbbf24",
+          border: "rgba(245, 158, 11, 0.2)",
+        };
       case "CANCELLED":
-        return { bg: "rgba(239, 68, 68, 0.1)", text: "#f87171" };
+        return {
+          bg: "rgba(239, 68, 68, 0.15)",
+          text: "#f87171",
+          border: "rgba(239, 68, 68, 0.2)",
+        };
       default:
-        return { bg: "rgba(100, 116, 139, 0.2)", text: "#94a3b8" };
+        return {
+          bg: "rgba(148, 163, 184, 0.15)",
+          text: "#94a3b8",
+          border: "rgba(148, 163, 184, 0.2)",
+        };
     }
   };
 
@@ -134,27 +165,14 @@ export default function ProfilePopup({ open, onClose }) {
           .map((n) => n[0])
           .join("")
           .toUpperCase()
+          .slice(0, 2)
       : "U";
 
-  const handleTabChange = (event, newValue) => setActiveTab(newValue);
-
-  const handleInputChange = (field, value) => {
-    setEditForm({ ...editForm, [field]: value });
-    if (errors[field]) setErrors({ ...errors, [field]: "" });
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!editForm.name || editForm.name.trim().length < 2)
-      newErrors.name = "Name too short";
-    if (!editForm.dateOfBirth) newErrors.dateOfBirth = "Date required";
-    if (!editForm.gender) newErrors.gender = "Gender required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSave = async () => {
-    if (!validateForm()) return;
+    if (!editForm.name || !editForm.dateOfBirth) {
+      setErrors({ name: "Required", dateOfBirth: "Required" });
+      return;
+    }
     try {
       setLoading(true);
       await updateProfile({
@@ -166,33 +184,14 @@ export default function ProfilePopup({ open, onClose }) {
       dispatch(setUser(refreshed.data));
       setUserData(refreshed.data);
       setToastOpen(true);
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
   if (!userData || !editForm) return null;
-
-  // --- STYLES ---
-  const inputStyles = {
-    "& .MuiInputLabel-root": { color: "#aaa" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#60a5fa" },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": { borderColor: "#333" },
-      "&:hover fieldset": { borderColor: "#555" },
-      "&.Mui-focused fieldset": { borderColor: "#60a5fa" },
-      color: "white",
-      backgroundColor: "rgba(255,255,255,0.03)",
-    },
-    "& .MuiSvgIcon-root": { color: "white" },
-    "& .MuiInputBase-input.Mui-disabled": {
-      WebkitTextFillColor: "#a3a3a3",
-      color: "#a3a3a3",
-      opacity: 1,
-    },
-  };
 
   return (
     <>
@@ -201,143 +200,170 @@ export default function ProfilePopup({ open, onClose }) {
         onClose={onClose}
         fullWidth
         maxWidth="md"
+        fullScreen={isMobile} // Fullscreen on mobile for better UX
         PaperProps={{
           style: {
-            backgroundColor: "#0f0f11",
-            color: "white",
-            borderRadius: "20px",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow: "0px 20px 50px rgba(0,0,0,0.7)",
+            ...GLASS_STYLE,
+            borderRadius: isMobile ? 0 : "24px",
+            overflow: "hidden",
             backgroundImage: "none",
           },
         }}
         BackdropProps={{
           style: {
-            backdropFilter: "blur(5px)",
-            backgroundColor: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(8px)",
+            backgroundColor: "rgba(0,0,0,0.7)",
           },
         }}
       >
-        <div className="flex justify-between items-center p-6 border-b border-gray-800">
-          <DialogTitle className="p-0 text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Account Settings
-          </DialogTitle>
-          <IconButton
-            onClick={onClose}
-            sx={{ color: "gray", "&:hover": { color: "white" } }}
-          >
-            <X size={24} />
-          </IconButton>
-        </div>
+        <div className="flex flex-col h-full md:h-[600px] md:flex-row">
+          {/* --- SIDEBAR (Desktop) / TOPBAR (Mobile) --- */}
+          <div className="w-full md:w-[280px] bg-black/20 border-b md:border-b-0 md:border-r border-white/10 flex flex-col">
+            
+            {/* Header / Close Button */}
+            <div className="p-4 flex justify-between md:justify-end items-center">
+               <Typography variant="h6" className="md:hidden font-bold text-white pl-2">
+                  My Profile
+               </Typography>
+              <IconButton
+                onClick={onClose}
+                className="hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+              >
+                <X size={20} />
+              </IconButton>
+            </div>
 
-        <DialogContent className="p-0">
-          <div className="flex flex-col md:flex-row h-[500px]">
-            {/* Sidebar */}
-            <div className="w-full md:w-1/4 border-r border-gray-800 p-4 bg-white/5">
-              <div className="flex flex-col items-center mb-8 mt-4">
-                <div className="relative">
-                  <Avatar
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      bgcolor: "transparent",
-                      border: "2px solid #60a5fa",
-                      fontSize: "2rem",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {getInitials(userData.name)}
-                  </Avatar>
-                  <div className="absolute bottom-0 right-0 bg-blue-500 p-1.5 rounded-full cursor-pointer hover:bg-blue-400 transition">
-                    <Camera size={14} color="white" />
+            {/* Profile Summary */}
+            <div className="flex flex-col items-center px-6 pb-6 pt-2">
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={
+                  <div className="bg-indigo-500 p-1.5 rounded-full border-4 border-[#1a1f2e] cursor-pointer hover:bg-indigo-400 transition shadow-lg">
+                    <Camera size={14} className="text-white" />
                   </div>
-                </div>
-                <Typography
-                  variant="subtitle1"
-                  fontWeight={600}
-                  className="mt-3 text-white"
-                >
-                  {userData.name}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  className="text-gray-400 block truncate w-full text-center px-2"
-                >
-                  {userData.email}
-                </Typography>
-              </div>
-
-              <Tabs
-                orientation="vertical"
-                value={activeTab}
-                onChange={handleTabChange}
-                sx={{
-                  "& .MuiTab-root": {
-                    color: "gray",
-                    alignItems: "start",
-                    textTransform: "none",
-                    fontSize: "1rem",
-                    minHeight: "48px",
-                  },
-                  "& .Mui-selected": {
-                    color: "#60a5fa !important",
+                }
+              >
+                <Avatar
+                  sx={{
+                    width: 90,
+                    height: 90,
+                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                    fontSize: "2rem",
                     fontWeight: "bold",
-                  },
+                    color: "white",
+                    boxShadow: "0 0 20px rgba(99, 102, 241, 0.3)",
+                    border: "2px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  {getInitials(userData.name)}
+                </Avatar>
+              </Badge>
+              <Typography variant="h6" className="mt-4 font-bold text-white tracking-wide">
+                {userData.name}
+              </Typography>
+              <Typography variant="caption" className="text-gray-400 font-medium">
+                {userData.email}
+              </Typography>
+              <div className="mt-4 flex gap-2">
+                <Chip 
+                    label="Traveler" 
+                    size="small" 
+                    sx={{ bgcolor: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.2)' }} 
+                />
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="md:flex-1 md:py-4 overflow-x-auto md:overflow-visible no-scrollbar">
+              <Tabs
+                orientation={isMobile ? "horizontal" : "vertical"}
+                value={activeTab}
+                onChange={(e, val) => setActiveTab(val)}
+                variant={isMobile ? "scrollable" : "standard"}
+                scrollButtons={false}
+                sx={{
                   "& .MuiTabs-indicator": {
-                    backgroundColor: "#60a5fa",
-                    width: "3px",
+                    left: 0,
+                    width: isMobile ? "0px" : "3px", // Hide indicator on mobile, standard on desktop
+                    backgroundColor: "#818cf8",
+                    borderRadius: "0 4px 4px 0",
+                  },
+                  "& .MuiTab-root": {
+                    color: "#94a3b8",
+                    textTransform: "none",
+                    fontWeight: 500,
+                    fontSize: "0.95rem",
+                    justifyContent: isMobile ? "center" : "flex-start",
+                    padding: isMobile ? "12px 16px" : "16px 32px",
+                    minHeight: "48px",
+                    gap: "12px",
+                    transition: "all 0.2s",
+                    "&.Mui-selected": {
+                      color: "white",
+                      background: isMobile ? "transparent" : "linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent)",
+                    },
+                    "&:hover": {
+                      color: "#e2e8f0",
+                      background: "rgba(255,255,255,0.03)",
+                    },
                   },
                 }}
               >
-                <Tab label="Profile Details" />
-                <Tab label="My Bookings" />
+                <Tab icon={<User size={18} />} iconPosition="start" label="Personal Info" />
+                <Tab icon={<Briefcase size={18} />} iconPosition="start" label="My Bookings" />
               </Tabs>
             </div>
+          </div>
 
-            {/* Content Area */}
-            <div className="flex-1 p-8 overflow-y-auto">
-              {/* TAB 0: PROFILE */}
+          {/* --- MAIN CONTENT AREA --- */}
+          <div className="flex-1 bg-gradient-to-br from-[#111] to-[#0d0d0d] relative overflow-hidden">
+             {/* Subtle Glow Effect in background */}
+             <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none" />
+
+            <div className="h-full overflow-y-auto p-6 md:p-10 custom-scrollbar">
+              
+              {/* TAB 0: PROFILE FORM */}
               {activeTab === 0 && (
-                <div className="space-y-6 animate-fadeIn">
-                  <Typography variant="h6" className="text-gray-200 mb-4">
-                    Personal Information
-                  </Typography>
-                  <div className="grid grid-cols-1 gap-6">
+                <div className="max-w-lg mx-auto space-y-8 animate-fade-in-up">
+                  <div className="mb-6">
+                    <Typography variant="h5" className="text-white font-bold mb-1">
+                      Personal Details
+                    </Typography>
+                    <Typography variant="body2" className="text-gray-400">
+                      Update your personal information and profile settings.
+                    </Typography>
+                  </div>
+
+                  <div className="space-y-5">
                     <TextField
                       fullWidth
                       label="Full Name"
-                      value={editForm.name}
+                      value={editForm.name || ""}
                       error={!!errors.name}
                       helperText={errors.name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
-                      }
-                      sx={inputStyles}
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      sx={INPUT_STYLES}
                     />
-                    <div className="grid grid-cols-2 gap-6">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <TextField
                         fullWidth
                         type="date"
                         label="Date of Birth"
-                        value={editForm.dateOfBirth}
+                        value={editForm.dateOfBirth || ""}
                         InputLabelProps={{ shrink: true }}
-                        onChange={(e) =>
-                          handleInputChange("dateOfBirth", e.target.value)
-                        }
-                        sx={inputStyles}
+                        onChange={(e) => setEditForm({ ...editForm, dateOfBirth: e.target.value })}
+                        sx={INPUT_STYLES}
                       />
-                      <FormControl fullWidth sx={inputStyles}>
+                      <FormControl fullWidth sx={INPUT_STYLES}>
                         <InputLabel>Gender</InputLabel>
                         <Select
-                          value={editForm.gender}
+                          value={editForm.gender || ""}
                           label="Gender"
-                          onChange={(e) =>
-                            handleInputChange("gender", e.target.value)
-                          }
+                          onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
                           MenuProps={{
-                            PaperProps: {
-                              sx: { bgcolor: "#1a1a1a", color: "white" },
-                            },
+                             PaperProps: { sx: { bgcolor: "#1e293b", color: "white" } }
                           }}
                         >
                           <MenuItem value="MALE">Male</MenuItem>
@@ -346,34 +372,41 @@ export default function ProfilePopup({ open, onClose }) {
                         </Select>
                       </FormControl>
                     </div>
+
                     <TextField
                       fullWidth
-                      value={editForm.email}
                       label="Email Address"
+                      value={editForm.email || ""}
                       disabled
-                      InputLabelProps={{
-                        shrink: true,
-                        sx: {
-                          color: "#a3a3a3",
-                          "&.Mui-disabled": { color: "#a3a3a3" },
-                        },
+                      sx={{
+                          ...INPUT_STYLES,
+                          "& .MuiInputBase-input.Mui-disabled": { 
+                              WebkitTextFillColor: "#64748b",
+                              cursor: "not-allowed" 
+                          }
                       }}
-                      sx={inputStyles}
                     />
                   </div>
-                  <div className="mt-8 flex justify-end">
+
+                  <div className="pt-4 flex justify-end">
                     <Button
                       variant="contained"
                       onClick={handleSave}
                       disabled={loading}
                       sx={{
-                        background: "linear-gradient(45deg, #2563eb, #60a5fa)",
+                        background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                        padding: "10px 32px",
+                        borderRadius: "12px",
                         textTransform: "none",
-                        padding: "8px 32px",
-                        borderRadius: "8px",
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        boxShadow: "0 4px 15px rgba(124, 58, 237, 0.3)",
+                        "&:hover": {
+                           boxShadow: "0 6px 20px rgba(124, 58, 237, 0.5)",
+                        }
                       }}
                     >
-                      {loading ? "Saving..." : "Save Changes"}
+                      {loading ? <CircularProgress size={24} color="inherit" /> : "Save Changes"}
                     </Button>
                   </div>
                 </div>
@@ -381,111 +414,118 @@ export default function ProfilePopup({ open, onClose }) {
 
               {/* TAB 1: BOOKINGS */}
               {activeTab === 1 && (
-                <div className="space-y-4 animate-fadeIn">
-                  <Typography variant="h6" className="text-gray-200 mb-4">
-                    Booking History
-                  </Typography>
+                <div className="space-y-6 animate-fade-in-up">
+                  <div className="flex justify-between items-end mb-2">
+                    <div>
+                        <Typography variant="h5" className="text-white font-bold mb-1">
+                        My Bookings
+                        </Typography>
+                        <Typography variant="body2" className="text-gray-400">
+                        Manage your upcoming and past stays.
+                        </Typography>
+                    </div>
+                  </div>
 
                   {bookingsLoading ? (
-                    <div className="flex justify-center mt-10">
-                      <CircularProgress sx={{ color: "#60a5fa" }} />
+                    <div className="h-64 flex items-center justify-center">
+                      <CircularProgress sx={{ color: "#818cf8" }} />
                     </div>
                   ) : bookings.length === 0 ? (
-                    <div className="text-center text-gray-500 py-10">
-                      No bookings found.
+                    <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-800 rounded-2xl bg-white/5">
+                      <Briefcase size={48} className="text-gray-600 mb-3" />
+                      <Typography className="text-gray-400">No bookings found</Typography>
                     </div>
                   ) : (
-                    bookings.map((booking) => {
-                      const statusStyle = getStatusColor(booking.status);
-                      return (
-                        <Paper
-                          key={booking.id}
-                          elevation={0}
-                          sx={{
-                            bgcolor: "rgba(255,255,255,0.03)",
-                            border: "1px solid #333",
-                            borderRadius: "12px",
-                            overflow: "hidden",
-                            display: "flex",
-                            transition: "all 0.2s",
-                            "&:hover": {
-                              borderColor: "#555",
-                              transform: "translateY(-2px)",
-                            },
-                          }}
-                        >
-                          {/* Image */}
-                          <img
-                            src={booking.image}
-                            alt={booking.hotelName}
-                            className="w-24 h-auto object-cover"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src =
-                                "https://via.placeholder.com/200?text=No+Image";
-                            }} // Fallback if image URL is bad
-                          />
-
-                          <div className="p-4 flex-1">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <Typography
-                                  variant="subtitle1"
-                                  fontWeight="bold"
-                                  className="text-white"
-                                >
-                                  {booking.hotelName}
-                                </Typography>
-                                <div className="flex items-center gap-1 text-gray-400 text-xs mt-1">
-                                  <MapPin size={12} /> {booking.location}
-                                </div>
-                              </div>
-                              <Chip
-                                label={booking.status}
-                                size="small"
-                                sx={{
-                                  bgcolor: statusStyle.bg,
-                                  color: statusStyle.text,
-                                  fontWeight: "bold",
-                                  borderRadius: "6px",
-                                }}
-                              />
+                    <div className="grid gap-4">
+                      {bookings.map((booking) => {
+                        const style = getStatusColor(booking.status);
+                        return (
+                          <div
+                            key={booking.id}
+                            className="group relative bg-white/5 border border-white/5 rounded-xl overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:bg-white/[0.07] flex flex-col sm:flex-row"
+                          >
+                            {/* Image Section */}
+                            <div className="sm:w-32 h-32 sm:h-auto relative overflow-hidden">
+                                <img
+                                    src={booking.image}
+                                    alt={booking.hotelName}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent sm:hidden" />
                             </div>
 
-                            <div className="flex justify-between items-end mt-3">
-                              <div className="flex gap-4">
-                                <div className="flex items-center gap-2 text-sm text-gray-300">
-                                  <Calendar size={14} /> {booking.dates}
+                            {/* Content Section */}
+                            <div className="p-4 flex-1 flex flex-col justify-between">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 className="text-white font-bold text-lg leading-tight group-hover:text-indigo-400 transition-colors">
+                                            {booking.hotelName}
+                                        </h3>
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs mt-1">
+                                            <MapPin size={12} /> {booking.location}
+                                        </div>
+                                    </div>
+                                    <span
+                                        className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider border"
+                                        style={{
+                                            backgroundColor: style.bg,
+                                            color: style.text,
+                                            borderColor: style.border
+                                        }}
+                                    >
+                                        {booking.status}
+                                    </span>
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-300">
-                                  <Users size={14} /> {booking.guests} Guests
+
+                                <div className="flex items-end justify-between mt-3 sm:mt-0">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-gray-400">
+                                        <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded">
+                                            <Calendar size={12} className="text-indigo-400" />
+                                            {booking.dates}
+                                        </div>
+                                        <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded">
+                                            <Users size={12} className="text-indigo-400" />
+                                            {booking.guests} Guests
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-xs text-gray-500 mb-0.5">Total Amount</div>
+                                        <div className="text-lg font-bold text-white">
+                                            ₹{booking.price?.toLocaleString()}
+                                        </div>
+                                    </div>
                                 </div>
-                              </div>
-                              <Typography
-                                variant="body2"
-                                className="text-blue-400 font-semibold"
-                              >
-                                ₹{booking.price?.toFixed(2) || "0.00"}
-                              </Typography>
+                            </div>
+                            
+                            {/* Hover Arrow (Desktop) */}
+                            <div className="hidden sm:flex absolute right-0 top-0 bottom-0 w-8 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-l from-black/50 to-transparent">
+                                <ChevronRight size={20} className="text-white" />
                             </div>
                           </div>
-                        </Paper>
-                      );
-                    })
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               )}
             </div>
           </div>
-        </DialogContent>
+        </div>
       </Dialog>
+
       <Snackbar
         open={toastOpen}
-        autoHideDuration={2000}
+        autoHideDuration={3000}
         onClose={() => setToastOpen(false)}
         message="Profile updated successfully"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         ContentProps={{
-          sx: { bgcolor: "#10b981", color: "white", fontWeight: "bold" },
+          sx: {
+            background: "linear-gradient(to right, #059669, #10b981)",
+            color: "white",
+            fontWeight: 600,
+            borderRadius: "8px",
+          },
         }}
       />
     </>
