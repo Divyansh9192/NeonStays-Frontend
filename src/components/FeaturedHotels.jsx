@@ -127,7 +127,7 @@ export default function FeaturedHotels() {
 
                   <div className="flex items-center justify-between mt-3">
                     <p className="text-xl font-semibold text-neutral-900">
-                      ${hotel.price}
+                      ₹{hotel.price}
                       <span className="text-sm text-neutral-500">/night</span>
                     </p>
 
