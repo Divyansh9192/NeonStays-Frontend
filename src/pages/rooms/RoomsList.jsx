@@ -19,7 +19,6 @@ const RoomsList = () => {
   const fetchHotelStatus = async () => {
     try {
       const res = await getOwnerHotels();
-      console.log(res.data)
       const hotel = res?.data.find(h => String(h.id) === String(hotelId));
 
       setHotelActive(hotel?.active);

@@ -14,7 +14,7 @@ export default function RoomsPageWrapper() {
       checkIn={checkIn}
       checkOut={checkOut}
       isLoading={false}
-      onViewRooms={(id) => console.log("Selected Hotel:", id)}
+      onViewRooms={id => {}}
     />
   );
 }

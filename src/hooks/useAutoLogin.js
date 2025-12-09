@@ -22,13 +22,8 @@ const useAutoLogin = () => {
         const refreshRes = await refreshToken();
         const newAccessToken = refreshRes?.data?.accessToken;
 
-        console.log("Auto-login refresh token response:", refreshRes);
-
         if (newAccessToken) {
           setAccessToken(newAccessToken);
-
-          console.log("Auto-login successful. New access token obtained.");
-
           const profileRes = await api.get("/users/profile", {
             withCredentials: true,
           });
@@ -36,8 +31,7 @@ const useAutoLogin = () => {
           dispatch(setUser(profileRes.data));
         }
       } catch (error) {
-        console.log("Auto-login failed:", error);
-        console.log("Refresh BASE_URL =", BASE_URL);
+        throw error;
       } finally {
         setLoading(false); // IMPORTANT
       }

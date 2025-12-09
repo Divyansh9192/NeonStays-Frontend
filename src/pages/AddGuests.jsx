@@ -120,7 +120,6 @@ const AddGuests = () => {
   // -- API Call --
   const handleSubmit = async () => {
     if (!isValid) return;
-    console.log(bookingId)
     setIsSubmitting(true);
     setError(null);
 
@@ -134,11 +133,9 @@ const AddGuests = () => {
     try {
       // Mocking API URL structure based on requirements
       const url = `/bookings/${bookingId}/addGuests`;
-      console.log(bookingId);
       // Actual call (Commented out solely for demo purposes so it doesn't actually crash in a non-API env)
       // await axios.post(url, payload);
       const response = await api.post(url, payload);
-      console.log("Add Guests Response:", response.data);
 
       setShowSuccess(true);
       // Reset form after success modal closes or immediately

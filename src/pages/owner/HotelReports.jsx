@@ -24,9 +24,9 @@ const HotelReports = () => {
     // OwnerService.getReports(hotelId, filters.startDate, filters.endDate).then(...)
     try {
       const res = getHotelReport(hotelId, filters.startDate, filters.endDate);
-      console.log(res);
+
     } catch (err) {
-      console.log(err);
+      throw err;
     }
 
     // Simulating API Latency

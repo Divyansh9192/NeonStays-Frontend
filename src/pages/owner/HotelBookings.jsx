@@ -11,7 +11,6 @@ const HotelBookings = () => {
     const fetchBookings = async () => {
       try {
         const res = await getHotelBookings(hotelId);
-        console.log(res);
         setBookings(res.data);
       } catch (err) {
         console.error("Failed to fetch bookings", err);

@@ -43,7 +43,6 @@ export const setupInterceptors = () => {
           // ✅ CHANGE: recommended Axios retry call
           return api.request(original); // ✅ (was api(original))
         } catch (err) {
-          console.log("Refresh failed. Redirecting to login.");
           alert("Session expired. Please log in again.");
 
           // ✅ CHANGE: replace instead of href (prevents back-navigation into protected pages)

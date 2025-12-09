@@ -34,8 +34,7 @@ const HotelForm = () => {
   useEffect(() => {
     if (isEditMode) {
       getHotelById(hotelId).then((res) => {
-        const data = res.data; // ✅ Correct level
-        console.log(data);
+        const data = res.data;
         setFormData({
           name: data.name || "",
           city: data.city || "",
@@ -76,7 +75,6 @@ const HotelForm = () => {
         await updateHotel(hotelId, formData);
       } else {
         await createHotel(formData);
-        console.log(formData);
         setShowDialog(true);
       }
     } catch (err) {

@@ -11,8 +11,6 @@ const Payments = () => {
   const [loadingPayment, setLoadingPayment] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("PAYMENTS MOUNT", bookingId);
-
   useEffect(() => {
     // Don't run if bookingId missing
     if (!bookingId) {
@@ -26,15 +24,12 @@ const Payments = () => {
 
     const initiatePayment = async () => {
       try {
-        console.log("Initiating payment for:", bookingId);
 
         const response = await api.post(
           `/bookings/${bookingId}/payments`,
           {},
           { withCredentials: true } // IMPORTANT
         );
-
-        console.log("FULL PAYMENT RESPONSE:", response.data);
 
         const url = response?.data?.data?.sessionUrl;
 

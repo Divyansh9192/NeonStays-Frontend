@@ -24,7 +24,6 @@ const RoomDetails = () => {
     const fetchData = async () => {
       try {
         const roomData = await getRoomById(hotelId, roomId);
-        console.log(roomData);
         setRoom(roomData?.data);
 
         const base = Number(roomData?.data.basePrice) || 0;

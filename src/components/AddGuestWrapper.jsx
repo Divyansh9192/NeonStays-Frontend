@@ -6,7 +6,6 @@ const AddGuestWrapper = () => {
   const { state } = useLocation();
 
   const bookingId = state?.bookingId || null;
-  console.log(bookingId)
   return (
     <AddGuests bookingId={bookingId} />
   )

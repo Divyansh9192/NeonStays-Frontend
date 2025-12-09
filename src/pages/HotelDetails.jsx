@@ -392,14 +392,9 @@ const RoomCard = ({
   useEffect(() => {
     const fetchPrice = async () => {
       // Defensive: log inputs
-      console.log("[price] fetch start", {
-        roomId: room.id,
-        checkIn,
-        checkOut,
-      });
+     
 
       if (!checkIn || !checkOut) {
-        console.log("[price] no dates selected, skipping fetch");
         return;
       }
       try {
@@ -443,8 +438,6 @@ const RoomCard = ({
           toLocalDate(checkOut)
         );
 
-        // log the raw response so we can see structure
-        console.log("[price] raw response:", res);
 
         // support both patterns: axios-res.data or already returned data
         const payload = res?.data ?? res;
@@ -486,7 +479,6 @@ const RoomCard = ({
         roomsCount
       );
       // In this demo, we'll just show a success message and log the ID
-      console.log("Booking initialized successfully:", res.data.id);
 
       // NOTE: navigate(`/addguests/${res.data.id}`); is commented out for this demo
       // if (onError) onError(`Booking Success! ID: ${res.data.id}`);

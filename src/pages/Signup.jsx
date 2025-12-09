@@ -39,13 +39,10 @@ const Signup = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("SENDING:", data); 
     try {
     const response = await api.post("/auth/signup", data, {
       withCredentials: true, // only if you want cookies
     });
-
-    console.log("Signup success:", response.data);
     setError(null);
     navigate("/login");
   } catch (error) {

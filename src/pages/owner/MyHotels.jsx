@@ -10,7 +10,6 @@ const MyHotels = () => {
     const fetchHotels = async () => {
       try {
         const res = await getOwnerHotels();
-        console.log(res.data);
         setHotels(
           res.data || [
             {
@@ -32,7 +31,7 @@ const MyHotels = () => {
           ]
         ); // ✅ Update state from API
       } catch (err) {
-        console.log(err);
+        throw err;
       }
     };
 
