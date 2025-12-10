@@ -49,12 +49,7 @@ const PaymentSuccess = () => {
         }
         const res = await getPaymentInfo(sessionId);
         console.log(res);
-        if (!res.ok) {
-          throw new Error("Failed to load payment details");
-        }
-
-        const json = await res.json();
-        setData(json);
+        setData(res.data);
 
       } catch (err) {
         console.error(err);
