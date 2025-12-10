@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { Check, ArrowRight, Download, Copy, Home } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { get } from 'react-hook-form';
+import { getPaymentInfo } from '../api/paymentInfo';
 
 // internal window-size hook
 const useWindowSize = () => {
@@ -45,12 +47,8 @@ const PaymentSuccess = () => {
           setLoading(false);
           return;
         }
-
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/payment/session/${sessionId}`,
-          { credentials: "include" }
-        );
-
+        const res = await getPaymentInfo(sessionId);
+        console.log(res);
         if (!res.ok) {
           throw new Error("Failed to load payment details");
         }
