@@ -104,7 +104,7 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   https://github.com/Divyansh9192/NeonStays-Frontend
    cd airbnbapp-frontend
    ```
 
@@ -133,7 +133,7 @@ VITE_BASE_URL=your_backend_api_url
 
 **Example:**
 ```env
-VITE_BASE_URL=http://localhost:8080/api
+VITE_BASE_URL=http://localhost:8081/api/v1
 ```
 
 > **Note**: Make sure your backend API is running and accessible at the specified URL.
