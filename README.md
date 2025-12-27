@@ -104,12 +104,8 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-<<<<<<< HEAD
-   git clone <repository-url>
-=======
-   https://github.com/Divyansh9192/NeonStays-Frontend
->>>>>>> d927c8551e2290feda74138914d012786a9a050e
-   cd airbnbapp-frontend
+   git clone https://github.com/Divyansh9192/NeonStays-Frontend
+   cd NeonStays-Frontend
    ```
 
 2. **Install dependencies**
@@ -137,11 +133,7 @@ VITE_BASE_URL=your_backend_api_url
 
 **Example:**
 ```env
-<<<<<<< HEAD
-VITE_BASE_URL=http://localhost:8080/api
-=======
 VITE_BASE_URL=http://localhost:8081/api/v1
->>>>>>> d927c8551e2290feda74138914d012786a9a050e
 ```
 
 > **Note**: Make sure your backend API is running and accessible at the specified URL.
@@ -213,10 +205,6 @@ airbnbapp-frontend/
 
 ## 📸 Screenshots
 
-> **📌 Where to Place Screenshots:**
-> 
-> Place your UI screenshots in the `screenshots/` directory in the root of your project. You can view the live application at [https://neonstays.vercel.app/](https://neonstays.vercel.app/) to take screenshots of the actual UI. Then update the paths below with your actual screenshot filenames.
-
 ### Homepage
 ![Homepage](./screenshots/homepage.png)
 *Beautiful landing page with hero section and featured hotels*
@@ -250,14 +238,6 @@ airbnbapp-frontend/
 *Payment confirmation page*
 
 ---
-
-**📝 Screenshot Guidelines:**
-- **Recommended Size**: 1920x1080 or 1440x900 pixels
-- **Format**: PNG or JPG
-- **Naming Convention**: Use descriptive names like `homepage.png`, `hotel-details.png`, etc.
-- **Location**: Place all screenshots in the `screenshots/` directory
-- **Update**: Replace the placeholder paths above with your actual screenshot filenames
-
 ## 🔌 API Integration
 
 The frontend communicates with a backend API. Ensure your backend is running and accessible at the `VITE_BASE_URL` specified in your `.env` file.
@@ -321,7 +301,7 @@ This project is private and proprietary.
 
 ## 👥 Authors
 
-- Your Name/Team Name
+- Divyansh
 
 ## 🙏 Acknowledgments
 
@@ -332,5 +312,4 @@ This project is private and proprietary.
 
 ---
 
-**Made with ❤️ using React and Vite**
 
