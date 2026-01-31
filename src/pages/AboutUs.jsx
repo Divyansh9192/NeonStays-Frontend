@@ -3,39 +3,6 @@ import { motion } from "framer-motion";
 import { MapPin, Star, Shield, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// --- Components ---
-
-// const Navbar = () => {
-//   return (
-//     <nav className="fixed top-0 left-0 w-full h-[88px] flex items-center justify-between px-10 z-50 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-[2px]">
-//       {/* Logo */}
-//       <div className="flex items-center gap-3">
-//         <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-//           <div className="w-3 h-3 bg-black rounded-full" />
-//         </div>
-//         <span className="text-white font-bold text-xl tracking-widest font-sans">NEONSTAYS</span>
-//       </div>
-
-//       {/* Links */}
-//       <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-//         <a href="#" className="hover:text-white transition-colors">Home</a>
-//         <a href="#" className="hover:text-white transition-colors">Hotels</a>
-//         <a href="#" className="hover:text-white transition-colors">Experience</a>
-//         <a href="#" className="text-white border-b border-white pb-1">About</a>
-//       </div>
-
-//       {/* Actions */}
-//       <div className="flex items-center gap-4">
-//         <button className="px-6 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-md">
-//           Dashboard
-//         </button>
-//         <button className="px-6 py-2 rounded-lg bg-[#111] text-white text-sm hover:bg-black border border-transparent hover:border-gray-800 transition-all duration-300">
-//           Logout
-//         </button>
-//       </div>
-//     </nav>
-//   );
-// };
 
 const FadeIn = ({ children, delay = 0 }) => (
   <motion.div
@@ -57,7 +24,8 @@ export default function AboutPage() {
   return (
     <div className="bg-[#050507] min-h-screen text-white selection:bg-cyan-500/30 font-sans overflow-x-hidden">
       {/* --- Hero Section --- */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden">
+      <section className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center px-4 text-center">
+
         {/* Ambient Background Glows */}
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-900/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-cyan-900/20 rounded-full blur-[120px]" />
@@ -77,7 +45,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="text-6xl md:text-8xl font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-500"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-500"
           >
             Beyond <br /> Accommodation.
           </motion.h1>
@@ -86,7 +54,7 @@ export default function AboutPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
+            className="text-sm sm:text-base md:text-lg max-w-3xl text-gray-500 mx-auto leading-relaxed"
           >
             We curate the world's most exclusive stays, blending modern
             technology with timeless luxury to create unforgettable gateways.
@@ -149,18 +117,21 @@ export default function AboutPage() {
 
       {/* --- Values (Glass Cards) --- */}
       <section className="py-32 bg-black/20 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <FadeIn>
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
-              <h2 className="text-4xl font-bold max-w-md">
-                Designed for the <br />
-                Discerning Traveler
-              </h2>
-              <p className="text-gray-500 mt-4 md:mt-0 max-w-xs text-right">
-                Our core pillars define every decision we make.
-              </p>
-            </div>
-          </FadeIn>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+  <FadeIn>
+    <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 md:gap-0 mb-12 md:mb-16 text-center md:text-left">
+      
+      <h2 className="text-3xl sm:text-4xl font-bold max-w-full md:max-w-md">
+        Designed for the <br className="hidden md:block" />
+        Discerning Traveler
+      </h2>
+
+      <p className="text-gray-500 text-sm sm:text-base mt-2 md:mt-0 max-w-full md:max-w-xs md:text-right">
+        Our core pillars define every decision we make.
+      </p>
+
+    </div>
+  </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
