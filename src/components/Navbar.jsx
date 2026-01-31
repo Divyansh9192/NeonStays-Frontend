@@ -40,7 +40,9 @@ export default function Navbar() {
   const startTime = useSelector((state) => state.booking.bookingInitiatedTime);
   const user = useSelector((state) => state?.auth?.user?.data);
   const roles = useSelector((state) => state?.auth?.user?.data?.roles);
-  const  isAuthenticated  = useSelector((state) => state?.auth?.isAuthenticated || false);
+  const isAuthenticated = useSelector(
+    (state) => state?.auth?.isAuthenticated || false,
+  );
 
   function getInitials(name = "") {
     const parts = name.trim().split(" ");
@@ -48,7 +50,6 @@ export default function Navbar() {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  ;
   async function handleLogout() {
     try {
       await logout();
@@ -215,7 +216,12 @@ overflow-hidden border-2 rounded-full group
         </button>
 
         {navLinks.map((link, i) => (
-          <Link key={i} href={link.path} onClick={() => setIsMenuOpen(false)}>
+          <Link
+            key={i}
+            to={link.path}
+            onClick={() => setIsMenuOpen(false)}
+            className="text-lg"
+          >
             {link.name}
           </Link>
         ))}
